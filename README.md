@@ -8,10 +8,23 @@
 - 基础镜像：`ubuntu:20.04`
 - 包含：交叉工具链、内核/U-Boot 构建依赖、Debian rootfs 构建工具（debootstrap/qemu-user-static 等）、python2/python3 及常用模块。
 
-## 构建镜像
+## 获取镜像（推荐）
+
+镜像由 GitHub Actions 自动构建并发布到 GHCR，直接拉取即可：
 
 ```bash
-docker build -t rklinux-builder -f docker/Dockerfile docker/
+docker pull ghcr.io/whoarei/rklinux-builder:0.1.0
+docker tag ghcr.io/whoarei/rklinux-builder:0.1.0 rklinux-builder
+```
+
+> 可用 `latest` 代替版本号获取最新镜像。
+
+## 本地构建（备选）
+
+仅在 GHCR 拉取困难（网络问题）或需要修改镜像时才本地构建：
+
+```bash
+docker build -t rklinux-builder .
 ```
 
 > 如果网络较慢，可编辑 `Dockerfile` 里的镜像源，或者添加代理变量。
