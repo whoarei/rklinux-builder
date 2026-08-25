@@ -29,17 +29,28 @@ docker build -t rklinux-builder .
 
 > 如果网络较慢，可编辑 `Dockerfile` 里的镜像源，或者添加代理变量。
 
-## 运行容器（映射整个工程）
+## 运行容器编译工程（映射整个工程）
+
+进入工程根目录，然后启动容器：
 
 ```bash
 docker run --rm -it --privileged \
-    -v /home/mmeng/rockchip/hzhy:/home/mmeng/rockchip/hzhy \
+    -v $PWD:$PWD \
+    -e HOST_USER=$USER \
+    -e HOST_UID=$(id -u) \
+    -e HOST_GID=$(id -g) \
+    -e HOST_PWD=$PWD \
     rklinux-builder
 ```
 
 > `--privileged` 是必需的：入口脚本需要挂载 `binfmt_misc` 并启用
 > `qemu-aarch64`，用于在 x86_64 上运行 arm64 二进制（debootstrap/live-build
 > 构建 Debian rootfs 时依赖）。入口脚本已自动完成 binfmt 启用，无需手动操作。
+>
+> `HOST_*` 环境变量让入口脚本在容器内创建与宿主机同 UID/GID 的用户，
+> 并以该用户执行命令，生成的文件在宿主机上仍归属当前用户；
+> `HOST_PWD` 让入口脚本自动 `cd` 到挂载的工作目录，与 Dockerfile 的
+> `WORKDIR` 无关。
 
 进入容器后执行：
 
@@ -55,7 +66,9 @@ docker run --rm -it --privileged \
 
 ```bash
 docker run --rm --privileged \
-    -v /home/mmeng/rockchip/hzhy:/home/mmeng/rockchip/hzhy \
+    -v $PWD:$PWD \
+    -e HOST_USER=$USER -e HOST_UID=$(id -u) -e HOST_GID=$(id -g) \
+    -e HOST_PWD=$PWD \
     rklinux-builder ./build.sh
 ```
 

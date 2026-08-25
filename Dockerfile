@@ -80,14 +80,12 @@ RUN pip3 install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple \
 # 常用环境变量，避免 perl 警告
 ENV LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 
-# 创建与宿主机一致的普通用户（SDK 构建脚本内部会 sudo 到该用户）
-RUN groupadd -g 1000 mmeng \
-    && useradd -u 1000 -g 1000 -m -s /bin/bash mmeng \
-    && echo "mmeng ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/mmeng \
-    && echo "root ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/mmeng
+# 普通用户在容器启动时由 entrypoint.sh 根据 HOST_USER/HOST_UID/HOST_GID
+# 环境变量动态创建（保证容器内生成的文件与宿主机用户所有权一致）
+RUN echo "root ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/root
 
-# 工作目录（对应宿主机挂载点）
-WORKDIR /home/mmeng/rockchip/hzhy
+# 工作目录由 entrypoint.sh 根据 HOST_PWD 动态切换，这里仅给一个兜底值
+WORKDIR /
 
 # 入口脚本：自动启用 qemu binfmt，然后转交命令
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
