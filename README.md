@@ -13,8 +13,8 @@
 镜像由 GitHub Actions 自动构建并发布到 GHCR，直接拉取即可：
 
 ```bash
-docker pull ghcr.io/whoarei/rklinux-builder:0.1.0
-docker tag ghcr.io/whoarei/rklinux-builder:0.1.0 rklinux-builder
+docker pull ghcr.io/whoarei/rklinux-builder
+docker tag ghcr.io/whoarei/rklinux-builder rklinux-builder
 ```
 
 > 可用 `latest` 代替版本号获取最新镜像。
