@@ -13,8 +13,8 @@
 镜像由 GitHub Actions 自动构建并发布到 GHCR，直接拉取即可：
 
 ```bash
-docker pull ghcr.io/whoarei/rklinux-builder
-docker tag ghcr.io/whoarei/rklinux-builder rklinux-builder
+docker pull ghcr.io/whoarei/rklinux-builder:0.1.2
+docker tag ghcr.io/whoarei/rklinux-builder:0.1.2 rklinux-builder
 ```
 
 > 可用 `latest` 代替版本号获取最新镜像。
@@ -73,6 +73,17 @@ docker run --rm --privileged \
 ```
 
 编译产物输出在 `output/` 与 `rockdev/` 中。
+
+## 验证镜像
+
+本地构建后运行以下检查；发布流程也会在推送镜像前执行：
+
+```bash
+bash tests/smoke.sh rklinux-builder
+```
+
+检查用户及文件属主、工作目录、免密 sudo、默认 Bash、错误输出和退出码、
+缺少 gosu 时的备用分支，以及停止信号处理。
 
 ## 说明
 

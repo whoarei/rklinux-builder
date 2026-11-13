@@ -42,7 +42,13 @@ if [ $# -eq 0 ]; then
 fi
 
 if [ "$(id -u)" = "0" ]; then
-    exec gosu "$HOST_USER" "$@" 2>/dev/null || exec runuser -u "$HOST_USER" -- "$@"
+    # 非交互 Bash 中 exec 找不到命令会直接退出，必须先检查再选择备用方式。
+    # 保留标准错误，避免隐藏切换用户或目标命令的报错。
+    if command -v gosu >/dev/null 2>&1; then
+        exec gosu "$HOST_USER" "$@"
+    else
+        exec runuser -u "$HOST_USER" -- "$@"
+    fi
 else
     exec "$@"
 fi

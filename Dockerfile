@@ -80,6 +80,11 @@ RUN pip3 install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple \
 # 常用环境变量，避免 perl 警告
 ENV LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 
+# 入口脚本使用 gosu 切换用户，让目标命令直接接收容器信号。
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gosu \
+    && rm -rf /var/lib/apt/lists/*
+
 # 普通用户在容器启动时由 entrypoint.sh 根据 HOST_USER/HOST_UID/HOST_GID
 # 环境变量动态创建（保证容器内生成的文件与宿主机用户所有权一致）
 RUN echo "root ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/root
